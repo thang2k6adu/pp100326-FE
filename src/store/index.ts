@@ -13,6 +13,9 @@ import storage from 'redux-persist/lib/storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import themeReducer from './slices/themeSlice';
+import projectReducer from './slices/projectSlice';
+import stakeholderReducer from './slices/stakeholderSlice';
+import stakeholderTemplateReducer from './slices/stakeholderTemplateSlice';
 
 const persistConfig = {
   key: 'root',
@@ -24,6 +27,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   theme: themeReducer,
+  project: projectReducer,
+  stakeholder: stakeholderReducer,
+  stakeholderTemplate: stakeholderTemplateReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

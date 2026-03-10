@@ -12,6 +12,8 @@ const Login = React.lazy(() => import('@/pages/Login'));
 const SignUp = React.lazy(() => import('@/pages/SignUp'));
 const ForgotPassword = React.lazy(() => import('@/pages/ForgotPassword'));
 const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
+const Projects = React.lazy(() => import('@/pages/Projects'));
+const ProjectDetail = React.lazy(() => import('@/pages/ProjectDetail'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 
 // Protected Route Component
@@ -41,6 +43,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="projects"
+              element={
+                <ProtectedRoute>
+                  <Projects />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="projects/:id"
+              element={
+                <ProtectedRoute>
+                  <ProjectDetail />
                 </ProtectedRoute>
               }
             />
