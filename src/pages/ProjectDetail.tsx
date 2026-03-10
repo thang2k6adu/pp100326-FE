@@ -29,12 +29,38 @@ const ProjectDetail: React.FC = () => {
     Stakeholder | undefined
   >();
 
+  // Filter states
+  const [classification, setClassification] = useState('');
+  const [power, setPower] = useState('');
+  const [interest, setInterest] = useState('');
+  const [influence, setInfluence] = useState('');
+  const [currentAttitude, setCurrentAttitude] = useState('');
+  const [desiredAttitude, setDesiredAttitude] = useState('');
+
   useEffect(() => {
     if (id) {
       fetchProjectById(id);
-      fetchStakeholders({ projectId: id });
+      fetchStakeholders({
+        projectId: id,
+        ...(classification && { classification }),
+        ...(power && { power }),
+        ...(interest && { interest }),
+        ...(influence && { influence }),
+        ...(currentAttitude && { currentAttitude }),
+        ...(desiredAttitude && { desiredAttitude }),
+      });
     }
-  }, [id, fetchProjectById, fetchStakeholders]);
+  }, [
+    id,
+    fetchProjectById,
+    fetchStakeholders,
+    classification,
+    power,
+    interest,
+    influence,
+    currentAttitude,
+    desiredAttitude,
+  ]);
 
   const handleEdit = (stakeholder: Stakeholder) => {
     setSelectedStakeholder(stakeholder);
@@ -44,12 +70,41 @@ const ProjectDetail: React.FC = () => {
   const handleCloseForm = () => {
     setSelectedStakeholder(undefined);
     setIsFormOpen(false);
-    if (id) fetchStakeholders({ projectId: id }); // Refresh after edit/add
+    if (id) {
+      fetchStakeholders({
+        projectId: id,
+        ...(classification && { classification }),
+        ...(power && { power }),
+        ...(interest && { interest }),
+        ...(influence && { influence }),
+        ...(currentAttitude && { currentAttitude }),
+        ...(desiredAttitude && { desiredAttitude }),
+      });
+    }
   };
 
   const handleCloseTemplateModal = () => {
     setIsTemplateModalOpen(false);
-    if (id) fetchStakeholders({ projectId: id }); // Refresh after add
+    if (id) {
+      fetchStakeholders({
+        projectId: id,
+        ...(classification && { classification }),
+        ...(power && { power }),
+        ...(interest && { interest }),
+        ...(influence && { influence }),
+        ...(currentAttitude && { currentAttitude }),
+        ...(desiredAttitude && { desiredAttitude }),
+      });
+    }
+  };
+
+  const handleResetFilters = () => {
+    setClassification('');
+    setPower('');
+    setInterest('');
+    setInfluence('');
+    setCurrentAttitude('');
+    setDesiredAttitude('');
   };
 
   if (isProjectLoading || !currentProject) {
@@ -62,7 +117,9 @@ const ProjectDetail: React.FC = () => {
     { key: 'classification', header: 'Classification' },
     { key: 'power', header: 'Power/Impact' },
     { key: 'interest', header: 'Interest' },
-    { key: 'currentAttitude', header: 'Attitude' },
+    { key: 'influence', header: 'Influence' },
+    { key: 'currentAttitude', header: 'Current Attitude' },
+    { key: 'desiredAttitude', header: 'Desired Attitude' },
     {
       key: 'actions',
       header: 'Actions',
@@ -119,6 +176,123 @@ const ProjectDetail: React.FC = () => {
               </Button>
             </div>
           </div>
+
+          {/* Filters Section */}
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Classification
+                </label>
+                <select
+                  value={classification}
+                  onChange={e => setClassification(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="Internal">Internal</option>
+                  <option value="External">External</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Power
+                </label>
+                <select
+                  value={power}
+                  onChange={e => setPower(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Interest
+                </label>
+                <select
+                  value={interest}
+                  onChange={e => setInterest(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Influence
+                </label>
+                <select
+                  value={influence}
+                  onChange={e => setInfluence(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Current Attitude
+                </label>
+                <select
+                  value={currentAttitude}
+                  onChange={e => setCurrentAttitude(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="Leading">Leading</option>
+                  <option value="Supportive">Supportive</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Resistant">Resistant</option>
+                  <option value="Unaware">Unaware</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Desired Attitude
+                </label>
+                <select
+                  value={desiredAttitude}
+                  onChange={e => setDesiredAttitude(e.target.value)}
+                  className="w-full text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white"
+                >
+                  <option value="">All</option>
+                  <option value="Leading">Leading</option>
+                  <option value="Supportive">Supportive</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Resistant">Resistant</option>
+                  <option value="Unaware">Unaware</option>
+                </select>
+              </div>
+            </div>
+
+            {(classification ||
+              power ||
+              interest ||
+              influence ||
+              currentAttitude ||
+              desiredAttitude) && (
+              <div className="mt-4 flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetFilters}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            )}
+          </div>
+
           {isStakeholdersLoading ? (
             <p>Loading stakeholders...</p>
           ) : stakeholders.length > 0 ? (

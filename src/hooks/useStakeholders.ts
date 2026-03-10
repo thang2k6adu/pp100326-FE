@@ -34,6 +34,9 @@ export const useStakeholders = () => {
       classification?: string;
       power?: string;
       interest?: string;
+      influence?: string;
+      currentAttitude?: string;
+      desiredAttitude?: string;
     }) => {
       const result = await dispatch(fetchStakeholdersThunk(params));
       if (fetchStakeholdersThunk.rejected.match(result)) {

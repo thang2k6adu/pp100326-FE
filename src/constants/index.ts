@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
     REFRESH: '/auth/refresh',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    FIREBASE_LOGIN: '/auth/firebase-login',
   },
   PROJECTS: {
     LIST: '/projects',

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { auth } from '@/config/firebase';
+import { authService } from '@/services/authService';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -9,6 +10,7 @@ import {
   GithubAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
+  updateProfile,
 } from 'firebase/auth';
 import { LoginCredentials, SignUpCredentials } from '@/types/auth';
 import { User } from '@/types/auth';
@@ -17,27 +19,6 @@ interface AuthPayload {
   user: User;
   token: string;
 }
-
-// Helper function to create user data from Firebase user
-const createUserData = (
-  firebaseUser: {
-    uid: string;
-    email: string | null;
-    displayName: string | null;
-    photoURL: string | null;
-  },
-  displayName?: string
-): User => {
-  return {
-    id: firebaseUser.uid,
-    email: firebaseUser.email!,
-    displayName: displayName || firebaseUser.displayName || undefined,
-    photoURL: firebaseUser.photoURL || undefined,
-    role: 'user' as const,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-};
 
 // Helper function to handle Firebase errors
 const getErrorMessage = (error: unknown, defaultMessage: string): string => {
@@ -73,12 +54,22 @@ export const loginThunk = createAsyncThunk<
       credentials.password
     );
 
-    const token = await userCredential.user.getIdToken();
-    const userData = createUserData(userCredential.user);
+    const idToken = await userCredential.user.getIdToken();
 
-    localStorage.setItem('token', token);
+    const response = await authService.firebaseLogin({ idToken });
+    const { user, tokens } = response.data;
 
-    return { user: userData, token };
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+    // Provide default required fields for User type just in case backend misses them
+    const fullUser: User = {
+      ...user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return { user: fullUser, token: tokens.accessToken };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Login failed');
     return rejectWithValue(errorMessage);
@@ -104,15 +95,27 @@ export const signUpThunk = createAsyncThunk<
       credentials.password
     );
 
-    const token = await userCredential.user.getIdToken();
-    const userData = createUserData(
-      userCredential.user,
-      credentials.displayName
-    );
+    if (credentials.displayName) {
+      await updateProfile(userCredential.user, {
+        displayName: credentials.displayName,
+      });
+    }
 
-    localStorage.setItem('token', token);
+    const idToken = await userCredential.user.getIdToken(true); // force refresh so name is updated
 
-    return { user: userData, token };
+    const response = await authService.firebaseLogin({ idToken });
+    const { user, tokens } = response.data;
+
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+    const fullUser: User = {
+      ...user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return { user: fullUser, token: tokens.accessToken };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Sign up failed');
     return rejectWithValue(errorMessage);
@@ -155,12 +158,21 @@ export const signInWithGoogleThunk = createAsyncThunk<
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
 
-    const token = await userCredential.user.getIdToken();
-    const userData = createUserData(userCredential.user);
+    const idToken = await userCredential.user.getIdToken();
 
-    localStorage.setItem('token', token);
+    const response = await authService.firebaseLogin({ idToken });
+    const { user, tokens } = response.data;
 
-    return { user: userData, token };
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+    const fullUser: User = {
+      ...user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return { user: fullUser, token: tokens.accessToken };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Google sign in failed');
     return rejectWithValue(errorMessage);
@@ -183,12 +195,21 @@ export const signInWithFacebookThunk = createAsyncThunk<
     const provider = new FacebookAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
 
-    const token = await userCredential.user.getIdToken();
-    const userData = createUserData(userCredential.user);
+    const idToken = await userCredential.user.getIdToken();
 
-    localStorage.setItem('token', token);
+    const response = await authService.firebaseLogin({ idToken });
+    const { user, tokens } = response.data;
 
-    return { user: userData, token };
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+    const fullUser: User = {
+      ...user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return { user: fullUser, token: tokens.accessToken };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Facebook sign in failed');
     return rejectWithValue(errorMessage);
@@ -211,12 +232,21 @@ export const signInWithGitHubThunk = createAsyncThunk<
     const provider = new GithubAuthProvider();
     const userCredential = await signInWithPopup(auth, provider);
 
-    const token = await userCredential.user.getIdToken();
-    const userData = createUserData(userCredential.user);
+    const idToken = await userCredential.user.getIdToken();
 
-    localStorage.setItem('token', token);
+    const response = await authService.firebaseLogin({ idToken });
+    const { user, tokens } = response.data;
 
-    return { user: userData, token };
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+
+    const fullUser: User = {
+      ...user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return { user: fullUser, token: tokens.accessToken };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'GitHub sign in failed');
     return rejectWithValue(errorMessage);

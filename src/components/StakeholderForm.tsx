@@ -94,6 +94,7 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                     {...register('classification')}
                     className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   >
+                    <option value="">Select...</option>
                     <option value="Internal">Internal</option>
                     <option value="External">External</option>
                   </select>
@@ -106,6 +107,7 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                     {...register('power')}
                     className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   >
+                    <option value="">Select...</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
@@ -119,6 +121,7 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                     {...register('interest')}
                     className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   >
+                    <option value="">Select...</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
@@ -132,11 +135,42 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                     {...register('currentAttitude')}
                     className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   >
+                    <option value="">Select...</option>
                     <option value="Leading">Leading</option>
                     <option value="Supportive">Supportive</option>
                     <option value="Neutral">Neutral</option>
                     <option value="Resistant">Resistant</option>
                     <option value="Unaware">Unaware</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Desired Attitude
+                  </label>
+                  <select
+                    {...register('desiredAttitude')}
+                    className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  >
+                    <option value="">Select...</option>
+                    <option value="Leading">Leading</option>
+                    <option value="Supportive">Supportive</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="Resistant">Resistant</option>
+                    <option value="Unaware">Unaware</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Influence
+                  </label>
+                  <select
+                    {...register('influence')}
+                    className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  >
+                    <option value="">Select...</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
                   </select>
                 </div>
               </div>
@@ -147,6 +181,26 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                 <textarea
                   {...register('requirements')}
                   rows={2}
+                  className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Expectations
+                </label>
+                <textarea
+                  {...register('expectations')}
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Phase of Most Impact
+                </label>
+                <input
+                  {...register('phaseOfMostImpact')}
+                  placeholder="e.g. Planning, Executing"
                   className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>

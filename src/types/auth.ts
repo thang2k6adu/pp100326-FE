@@ -32,3 +32,24 @@ export interface ResetPasswordData {
   token: string;
   password: string;
 }
+
+export interface FirebaseLoginCredentials {
+  idToken: string;
+  deviceId?: string;
+  platform?: string;
+}
+
+export interface FirebaseLoginResponse {
+  error: boolean;
+  code: number;
+  message: string;
+  data: {
+    user: User;
+    tokens: {
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: number;
+    };
+  };
+  traceId: string;
+}
