@@ -7,6 +7,7 @@ import Button from '@/components/Button';
 import { Stakeholder } from '@/types/stakeholder';
 import StakeholderForm from '@/components/StakeholderForm';
 import TemplateModal from '@/components/TemplateModal';
+import * as XLSX from 'xlsx';
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -208,6 +209,35 @@ const ProjectDetail: React.FC = () => {
     );
   };
 
+  const handleExportExcel = () => {
+    const exportData = displayedStakeholders.map(s => ({
+      'name': s.name || '',
+      'Position': s.positionRole || '',
+      'Contact Information': s.contactInformation || '',
+      'requirements': s.requirements || '',
+      'Expectations': s.expectations || '',
+      'Classification': s.classification || '',
+      'power': s.power || '',
+      'Interest': s.interest || '',
+      'Influence': s.influence || '',
+      'Attitude': `${s.currentAttitude || ''} -> ${s.desiredAttitude || ''}`
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Stakeholders');
+    
+    // Auto-size columns slightly
+    const colWidths = [
+      { wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 40 }, 
+      { wch: 40 }, { wch: 15 }, { wch: 10 }, { wch: 10 }, 
+      { wch: 15 }, { wch: 25 }
+    ];
+    worksheet['!cols'] = colWidths;
+
+    XLSX.writeFile(workbook, `${currentProject?.name || 'Project'}_Stakeholders.xlsx`);
+  };
+
   if (isProjectLoading || !currentProject) {
     return <div>Loading project details...</div>;
   }
@@ -237,6 +267,12 @@ const ProjectDetail: React.FC = () => {
               Stakeholder Register
             </h2>
             <div className="space-x-3">
+              <Button
+                variant="outline"
+                onClick={handleExportExcel}
+              >
+                Export Excel
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => setIsTemplateModalOpen(true)}
