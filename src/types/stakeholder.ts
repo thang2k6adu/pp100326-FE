@@ -16,6 +16,7 @@ export interface Stakeholder {
   requirements?: string;
   expectations?: string;
   phaseOfMostImpact?: string;
+  group?: string | null;
   classification?: Classification;
   power?: Level;
   interest?: Level;
@@ -35,6 +36,7 @@ export interface CreateStakeholderData {
   requirements?: string;
   expectations?: string;
   phaseOfMostImpact?: string;
+  group?: string | null;
   classification?: Classification;
   power?: Level;
   interest?: Level;
@@ -80,6 +82,7 @@ export interface StakeholderTemplate {
   requirements?: string;
   expectations?: string;
   phaseOfMostImpact?: string;
+  group?: string | null;
   classification?: Classification;
   power?: Level;
   interest?: Level;
