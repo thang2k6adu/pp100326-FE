@@ -53,6 +53,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
           requirements: template.requirements,
           expectations: template.expectations,
           phaseOfMostImpact: template.phaseOfMostImpact,
+          score: template.score,
         });
       }
       toast.success(

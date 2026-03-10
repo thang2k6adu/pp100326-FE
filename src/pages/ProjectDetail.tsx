@@ -20,6 +20,7 @@ const ProjectDetail: React.FC = () => {
   const {
     stakeholders,
     fetchStakeholders,
+    deleteStakeholder,
     isLoading: isStakeholdersLoading,
   } = useStakeholders();
 
@@ -120,17 +121,46 @@ const ProjectDetail: React.FC = () => {
     { key: 'influence', header: 'Influence' },
     { key: 'currentAttitude', header: 'Current Attitude' },
     { key: 'desiredAttitude', header: 'Desired Attitude' },
+    { key: 'score', header: 'Score' },
     {
       key: 'actions',
       header: 'Actions',
       render: (stakeholder: Stakeholder) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleEdit(stakeholder)}
-        >
-          Edit
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(stakeholder)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Are you sure you want to delete this stakeholder?'
+                )
+              ) {
+                deleteStakeholder(stakeholder.id).then(() => {
+                  fetchStakeholders({
+                    projectId: id,
+                    ...(classification && { classification }),
+                    ...(power && { power }),
+                    ...(interest && { interest }),
+                    ...(influence && { influence }),
+                    ...(currentAttitude && { currentAttitude }),
+                    ...(desiredAttitude && { desiredAttitude }),
+                  });
+                });
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </div>
       ),
     },
   ];

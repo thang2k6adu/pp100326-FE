@@ -22,6 +22,7 @@ export interface Stakeholder {
   influence?: Level;
   currentAttitude?: Attitude;
   desiredAttitude?: Attitude;
+  score?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,6 +41,7 @@ export interface CreateStakeholderData {
   influence?: Level;
   currentAttitude?: Attitude;
   desiredAttitude?: Attitude;
+  score?: number;
 }
 
 export type UpdateStakeholderData = Partial<CreateStakeholderData>;
@@ -84,6 +86,7 @@ export interface StakeholderTemplate {
   influence?: Level;
   currentAttitude?: Attitude;
   desiredAttitude?: Attitude;
+  score?: number;
   createdAt: string;
   updatedAt: string;
 }

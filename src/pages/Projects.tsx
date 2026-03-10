@@ -9,7 +9,8 @@ import { CreateProjectData } from '@/types/project';
 import { createProjectThunk } from '@/store/thunks/projectThunks';
 
 const Projects: React.FC = () => {
-  const { projects, isLoading, fetchProjects, createProject } = useProjects();
+  const { projects, isLoading, fetchProjects, createProject, deleteProject } =
+    useProjects();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -56,8 +57,24 @@ const Projects: React.FC = () => {
               <div
                 key={project.id}
                 onClick={() => navigate(ROUTES.PROJECTS + '/' + project.id)}
-                className="cursor-pointer transition-transform transform hover:scale-105"
+                className="cursor-pointer transition-transform transform hover:scale-105 relative group"
               >
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    if (
+                      window.confirm(
+                        'Are you sure you want to delete this project?'
+                      )
+                    ) {
+                      deleteProject(project.id).then(() => fetchProjects());
+                    }
+                  }}
+                  className="absolute top-2 right-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity z-10 p-2"
+                  title="Delete Project"
+                >
+                  ✕
+                </button>
                 <Card title={project.name} hover>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
                     {project.description || 'No description provided.'}

@@ -173,6 +173,19 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                     <option value="Low">Low</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Score
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    {...register('score', { valueAsNumber: true })}
+                    className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    placeholder="e.g. 15"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
