@@ -31,6 +31,7 @@ const ProjectDetail: React.FC = () => {
   >();
 
   // Filter states
+  const [group, setGroup] = useState('');
   const [classification, setClassification] = useState('');
   const [power, setPower] = useState('');
   const [interest, setInterest] = useState('');
@@ -43,6 +44,7 @@ const ProjectDetail: React.FC = () => {
       fetchProjectById(id);
       fetchStakeholders({
         projectId: id,
+        ...(group && { group }),
         ...(classification && { classification }),
         ...(power && { power }),
         ...(interest && { interest }),
@@ -55,6 +57,7 @@ const ProjectDetail: React.FC = () => {
     id,
     fetchProjectById,
     fetchStakeholders,
+    group,
     classification,
     power,
     interest,
@@ -74,6 +77,7 @@ const ProjectDetail: React.FC = () => {
     if (id) {
       fetchStakeholders({
         projectId: id,
+        ...(group && { group }),
         ...(classification && { classification }),
         ...(power && { power }),
         ...(interest && { interest }),
@@ -89,6 +93,7 @@ const ProjectDetail: React.FC = () => {
     if (id) {
       fetchStakeholders({
         projectId: id,
+        ...(group && { group }),
         ...(classification && { classification }),
         ...(power && { power }),
         ...(interest && { interest }),
@@ -100,6 +105,7 @@ const ProjectDetail: React.FC = () => {
   };
 
   const handleResetFilters = () => {
+    setGroup('');
     setClassification('');
     setPower('');
     setInterest('');
@@ -115,6 +121,7 @@ const ProjectDetail: React.FC = () => {
   const columns = [
     { key: 'name', header: 'Name' },
     { key: 'positionRole', header: 'Role/Position' },
+    { key: 'group', header: 'Group' },
     { key: 'classification', header: 'Classification' },
     { key: 'power', header: 'Power/Impact' },
     { key: 'interest', header: 'Interest' },
@@ -147,6 +154,7 @@ const ProjectDetail: React.FC = () => {
                 deleteStakeholder(stakeholder.id).then(() => {
                   fetchStakeholders({
                     projectId: id,
+                    ...(group && { group }),
                     ...(classification && { classification }),
                     ...(power && { power }),
                     ...(interest && { interest }),
@@ -210,6 +218,18 @@ const ProjectDetail: React.FC = () => {
           {/* Filters Section */}
           <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Group
+                </label>
+                <input
+                  type="text"
+                  value={group}
+                  onChange={e => setGroup(e.target.value)}
+                  placeholder="Filter by group..."
+                  className="w-full px-3 py-2 text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:bg-gray-800 dark:text-white focus:outline-none focus:ring focus:border-blue-500"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Classification
@@ -305,7 +325,8 @@ const ProjectDetail: React.FC = () => {
               </div>
             </div>
 
-            {(classification ||
+            {(group ||
+              classification ||
               power ||
               interest ||
               influence ||

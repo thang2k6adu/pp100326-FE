@@ -44,6 +44,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
           projectId,
           name: template.name,
           positionRole: template.positionRole,
+          group: template.group,
           classification: template.classification,
           power: template.power,
           interest: template.interest,
@@ -103,7 +104,10 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       {template.positionRole}
                     </p>
-                    <div className="mt-2 text-xs flex gap-2">
+                    <div className="mt-2 text-xs flex flex-wrap gap-2">
+                      <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                        {template.group || 'No Group'}
+                      </span>
                       <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                         {template.classification}
                       </span>

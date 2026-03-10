@@ -31,6 +31,7 @@ export const useStakeholders = () => {
       limit?: number;
       search?: string;
       projectId?: string;
+      group?: string;
       classification?: string;
       power?: string;
       interest?: string;

@@ -14,6 +14,7 @@ export const fetchStakeholdersThunk = createAsyncThunk<
       limit?: number;
       search?: string;
       projectId?: string;
+      group?: string;
       classification?: string;
       power?: string;
       interest?: string;
