@@ -22,19 +22,23 @@ const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   });
 
   const power = watch('power');
+  const influence = watch('influence');
   const interest = watch('interest');
 
   useEffect(() => {
-    if (power && interest) {
-      const getVal = (level: string) => {
+    if (power || influence || interest) {
+      const getVal = (level: string | undefined) => {
         if (level === 'High') return 3;
         if (level === 'Medium') return 2;
         if (level === 'Low') return 1;
         return 0;
       };
-      setValue('score', getVal(power) * getVal(interest));
+      const p = getVal(power);
+      const inf = getVal(influence);
+      const int = getVal(interest);
+      setValue('score', p * 3 + inf * 2 + int * 1);
     }
-  }, [power, interest, setValue]);
+  }, [power, influence, interest, setValue]);
 
   useEffect(() => {
     if (isOpen) {
