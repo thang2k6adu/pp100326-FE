@@ -219,9 +219,11 @@ const ProjectDetail: React.FC = () => {
 
       const response = await stakeholderService.getStakeholders({
         projectId: id,
+        page: 1,
         limit: 100,
       });
 
+      // response is StakeholderListResponse: { error, code, message, data: { items, meta }, traceId }
       let exportItems: Stakeholder[] = response.data?.items || [];
 
       if (selectedGroup === 'Core Stakeholders') {
