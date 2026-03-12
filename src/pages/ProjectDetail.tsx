@@ -219,7 +219,7 @@ const ProjectDetail: React.FC = () => {
 
       const response = await stakeholderService.getStakeholders({
         projectId: id,
-        limit: 10000,
+        limit: 100,
       });
 
       let exportItems: Stakeholder[] = response.data?.items || [];
