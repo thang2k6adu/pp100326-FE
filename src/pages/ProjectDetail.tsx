@@ -8,7 +8,8 @@ import { Stakeholder } from '@/types/stakeholder';
 import StakeholderForm from '@/components/StakeholderForm';
 import TemplateModal from '@/components/TemplateModal';
 import * as XLSX from 'xlsx';
-
+import { stakeholderService } from '@/services/stakeholderService';
+import toast from 'react-hot-toast';
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -212,43 +213,91 @@ const ProjectDetail: React.FC = () => {
     );
   };
 
-  const handleExportExcel = () => {
-    const exportData = displayedStakeholders.map(s => ({
-      name: s.name || '',
-      Position: s.positionRole || '',
-      'Contact Information': s.contactInformation || '',
-      requirements: s.requirements || '',
-      Expectations: s.expectations || '',
-      Classification: s.classification || '',
-      power: s.power || '',
-      Interest: s.interest || '',
-      Influence: s.influence || '',
-      Attitude: `${s.currentAttitude || ''} -> ${s.desiredAttitude || ''}`,
-    }));
+  const handleExportExcel = async () => {
+    try {
+      const toastId = toast.loading('Preparing export data...');
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Stakeholders');
+      const response = await stakeholderService.getStakeholders({
+        projectId: id,
+        limit: 10000,
+      });
 
-    // Auto-size columns slightly
-    const colWidths = [
-      { wch: 25 },
-      { wch: 25 },
-      { wch: 25 },
-      { wch: 40 },
-      { wch: 40 },
-      { wch: 15 },
-      { wch: 10 },
-      { wch: 10 },
-      { wch: 15 },
-      { wch: 25 },
-    ];
-    worksheet['!cols'] = colWidths;
+      let exportItems: Stakeholder[] = response.data?.items || [];
 
-    XLSX.writeFile(
-      workbook,
-      `${currentProject?.name || 'Project'}_Stakeholders.xlsx`
-    );
+      if (selectedGroup === 'Core Stakeholders') {
+        const sorted = [...exportItems].sort(
+          (a: Stakeholder, b: Stakeholder) => {
+            const scoreDiff = (b.score || 0) - (a.score || 0);
+            if (scoreDiff !== 0) return scoreDiff;
+            const aIsInternal = a.classification === 'Internal' ? 1 : 0;
+            const bIsInternal = b.classification === 'Internal' ? 1 : 0;
+            return bIsInternal - aIsInternal;
+          }
+        );
+        exportItems = sorted.slice(0, 12);
+      } else if (selectedGroup !== 'All Stakeholders' && selectedGroup) {
+        exportItems = exportItems.filter(
+          (s: Stakeholder) => s.group === selectedGroup
+        );
+      }
+
+      exportItems.sort(
+        (a: Stakeholder, b: Stakeholder) => (b.score || 0) - (a.score || 0)
+      );
+
+      if (searchTerm.trim()) {
+        const lowerQuery = searchTerm.toLowerCase();
+        exportItems = exportItems.filter(
+          (s: Stakeholder) =>
+            (s.name && s.name.toLowerCase().includes(lowerQuery)) ||
+            (s.positionRole &&
+              s.positionRole.toLowerCase().includes(lowerQuery)) ||
+            (s.group && s.group.toLowerCase().includes(lowerQuery))
+        );
+      }
+
+      const exportData = exportItems.map((s: Stakeholder) => ({
+        name: s.name || '',
+        Position: s.positionRole || '',
+        'Contact Information': s.contactInformation || '',
+        requirements: s.requirements || '',
+        Expectations: s.expectations || '',
+        Classification: s.classification || '',
+        power: s.power || '',
+        Interest: s.interest || '',
+        Influence: s.influence || '',
+        Attitude: `${s.currentAttitude || ''} -> ${s.desiredAttitude || ''}`,
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Stakeholders');
+
+      // Auto-size columns slightly
+      const colWidths = [
+        { wch: 25 },
+        { wch: 25 },
+        { wch: 25 },
+        { wch: 40 },
+        { wch: 40 },
+        { wch: 15 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 15 },
+        { wch: 25 },
+      ];
+      worksheet['!cols'] = colWidths;
+
+      XLSX.writeFile(
+        workbook,
+        `${currentProject?.name || 'Project'}_Stakeholders.xlsx`
+      );
+
+      toast.success('Export completed successfully!', { id: toastId });
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast.error('Failed to export data');
+    }
   };
 
   if (isProjectLoading || !currentProject) {
