@@ -1,28 +1,25 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { CreateStakeholderData, Stakeholder } from '@/types/stakeholder';
-import { useStakeholders } from '@/hooks/useStakeholders';
+import { StakeholderTemplate } from '@/types/stakeholder';
+import { useStakeholderTemplates } from '@/hooks/useStakeholderTemplates';
 
-interface StakeholderFormProps {
+interface TemplateFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  initialData?: Stakeholder;
+  initialData?: StakeholderTemplate;
 }
 
-const StakeholderForm: React.FC<StakeholderFormProps> = ({
+const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
   isOpen,
   onClose,
-  projectId,
   initialData,
 }) => {
-  const { createStakeholder, updateStakeholder } = useStakeholders();
-  const { register, handleSubmit, reset, watch, setValue } =
-    useForm<CreateStakeholderData>({
-      defaultValues: initialData
-        ? { ...initialData, projectId }
-        : { projectId },
-    });
+  const { createTemplate, updateTemplate } = useStakeholderTemplates();
+  const { register, handleSubmit, reset, watch, setValue } = useForm<
+    Partial<StakeholderTemplate>
+  >({
+    defaultValues: initialData || {},
+  });
 
   const power = watch('power');
   const interest = watch('interest');
@@ -41,31 +38,22 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      reset(initialData ? { ...initialData, projectId } : { projectId });
+      reset(initialData || {});
     }
-  }, [isOpen, initialData, projectId, reset]);
+  }, [isOpen, initialData, reset]);
 
   if (!isOpen) return null;
 
-  const onSubmit = async (data: CreateStakeholderData) => {
-    // Strip identifying/extra fields to avoid backend validation errors on update
-    // Using destructuring to remove extra fields
+  const onSubmit = async (data: Partial<StakeholderTemplate>) => {
     const payload = { ...initialData, ...data };
-    delete (payload as unknown as Record<string, unknown>).id;
-    delete (payload as unknown as Record<string, unknown>).createdAt;
-    delete (payload as unknown as Record<string, unknown>).updatedAt;
-    delete (payload as unknown as Record<string, unknown>).deletedAt;
-    delete (payload as unknown as Record<string, unknown>).project;
-    delete (payload as unknown as Record<string, unknown>).projectId;
+    delete (payload as Record<string, unknown>).id;
+    delete (payload as Record<string, unknown>).createdAt;
+    delete (payload as Record<string, unknown>).updatedAt;
 
     if (initialData) {
-      // Re-add projectId if needed by the backend schema for update
-      await updateStakeholder(
-        initialData.id,
-        payload as Partial<CreateStakeholderData>
-      );
+      await updateTemplate(initialData.id, payload);
     } else {
-      await createStakeholder(data);
+      await createTemplate(data);
     }
     onClose();
   };
@@ -76,7 +64,7 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
         <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none dark:bg-gray-800">
           <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200 dark:border-gray-700">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {initialData ? 'Edit Stakeholder' : 'Add Stakeholder'}
+              {initialData ? 'Edit Template' : 'Add Template'}
             </h3>
             <button
               className="p-1 ml-auto text-3xl font-semibold leading-none text-black bg-transparent border-0 outline-none opacity-50 focus:outline-none dark:text-white"
@@ -111,10 +99,11 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Contact Info
+                    Group (Category)
                   </label>
                   <input
-                    {...register('contactInformation')}
+                    {...register('group')}
+                    placeholder="e.g. Project Team, Customers & Users"
                     className="w-full px-3 py-2 text-sm text-gray-700 border rounded shadow focus:outline-none focus:ring focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
                 </div>
@@ -263,7 +252,7 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
                 className="px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase transition-all duration-150 ease-linear rounded shadow outline-none bg-primary-600 hover:bg-primary-700 focus:outline-none hover:shadow-lg"
                 type="submit"
               >
-                {initialData ? 'Save Changes' : 'Add Stakeholder'}
+                {initialData ? 'Save Changes' : 'Add Template'}
               </button>
             </div>
           </form>
@@ -273,4 +262,4 @@ const StakeholderForm: React.FC<StakeholderFormProps> = ({
   );
 };
 
-export default StakeholderForm;
+export default TemplateFormModal;

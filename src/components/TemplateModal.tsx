@@ -17,7 +17,9 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
 }) => {
   const { templates, fetchTemplates, isLoading } = useStakeholderTemplates();
   const { createStakeholder } = useStakeholders();
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const [selectedTemplates, setSelectedTemplates] = useState<
+    Record<string, number>
+  >({});
   const [selectedGroup, setSelectedGroup] = useState<string | null>(
     'Core Stakeholders'
   );
@@ -181,9 +183,27 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
 
   const toggleSelection = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    setSelectedTemplates(prev =>
-      prev.includes(id) ? prev.filter(tid => tid !== id) : [...prev, id]
-    );
+    setSelectedTemplates(prev => {
+      const next = { ...prev };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = 1;
+      }
+      return next;
+    });
+  };
+
+  const updateQuantity = (
+    id: string,
+    quantity: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    e.stopPropagation();
+    setSelectedTemplates(prev => {
+      if (!prev[id]) return prev;
+      return { ...prev, [id]: Math.max(1, quantity) };
+    });
   };
 
   const toggleExpand = (id: string) => {
@@ -199,31 +219,38 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
   };
 
   const handleImport = async () => {
-    if (selectedTemplates.length === 0) return;
-    const toImport = templates.filter(t => selectedTemplates.includes(t.id));
+    const selectedIds = Object.keys(selectedTemplates);
+    if (selectedIds.length === 0) return;
+
+    const toImport = templates.filter(t => selectedIds.includes(t.id));
+    let totalImported = 0;
 
     try {
-      // Import them one by one
+      // Import them one by one based on quantity
       for (const template of toImport) {
-        await createStakeholder({
-          projectId,
-          name: template.name,
-          positionRole: template.positionRole,
-          group: template.group,
-          classification: template.classification,
-          power: template.power,
-          interest: template.interest,
-          influence: template.influence,
-          currentAttitude: template.currentAttitude,
-          desiredAttitude: template.desiredAttitude,
-          requirements: template.requirements,
-          expectations: template.expectations,
-          phaseOfMostImpact: template.phaseOfMostImpact,
-          score: template.score,
-        });
+        const quantity = selectedTemplates[template.id] || 1;
+        for (let i = 0; i < quantity; i++) {
+          await createStakeholder({
+            projectId,
+            name: template.name + (quantity > 1 ? ` (${i + 1})` : ''),
+            positionRole: template.positionRole,
+            group: template.group,
+            classification: template.classification,
+            power: template.power,
+            interest: template.interest,
+            influence: template.influence,
+            currentAttitude: template.currentAttitude,
+            desiredAttitude: template.desiredAttitude,
+            requirements: template.requirements,
+            expectations: template.expectations,
+            phaseOfMostImpact: template.phaseOfMostImpact,
+            score: template.score,
+          });
+          totalImported++;
+        }
       }
       toast.success(
-        `Imported ${selectedTemplates.length} templates successfully`
+        `Imported ${totalImported} stakeholders from ${selectedIds.length} templates successfully`
       );
       onClose();
     } catch {
@@ -374,7 +401,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
                         <div
                           onClick={() => toggleExpand(template.id)}
                           className={`p-3 flex items-center gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
-                            selectedTemplates.includes(template.id)
+                            selectedTemplates[template.id]
                               ? 'bg-primary-50/50 dark:bg-primary-900/10'
                               : ''
                           }`}
@@ -382,7 +409,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
                           <div className="flex-shrink-0">
                             <input
                               type="checkbox"
-                              checked={selectedTemplates.includes(template.id)}
+                              checked={!!selectedTemplates[template.id]}
                               onChange={() => {
                                 // Handled by onClick below to ensure propagation is stopped
                               }}
@@ -410,12 +437,38 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex-shrink-0 ml-4 w-[76px] flex justify-end">
-                                <span
-                                  className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-bold w-full ${scoreColor}`}
-                                >
-                                  Score: {score}
-                                </span>
+                              <div className="flex-shrink-0 ml-4 flex items-center gap-3">
+                                {!!selectedTemplates[template.id] && (
+                                  <div
+                                    className="flex items-center gap-1"
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <label className="text-xs text-gray-500">
+                                      Qty:
+                                    </label>
+                                    <input
+                                      type="number"
+                                      min={1}
+                                      max={50}
+                                      value={selectedTemplates[template.id]}
+                                      onChange={e =>
+                                        updateQuantity(
+                                          template.id,
+                                          parseInt(e.target.value) || 1,
+                                          e
+                                        )
+                                      }
+                                      className="w-16 px-1.5 py-0.5 text-xs text-center border-gray-300 dark:border-gray-600 rounded shadow-sm dark:bg-gray-700 dark:text-white focus:outline-none focus:ring focus:border-primary-500"
+                                    />
+                                  </div>
+                                )}
+                                <div className="w-[76px] flex justify-end">
+                                  <span
+                                    className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-bold w-full ${scoreColor}`}
+                                  >
+                                    Score: {score}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -531,7 +584,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
           </div>
           <div className="flex items-center justify-between p-6 border-t border-solid rounded-b border-blueGray-200 dark:border-gray-700">
             <span className="text-sm text-gray-500">
-              {selectedTemplates.length} templates selected
+              {Object.keys(selectedTemplates).length} templates selected
             </span>
             <div>
               <Button variant="ghost" onClick={onClose} className="mr-2">
@@ -540,7 +593,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
               <Button
                 variant="primary"
                 onClick={handleImport}
-                disabled={selectedTemplates.length === 0}
+                disabled={Object.keys(selectedTemplates).length === 0}
               >
                 Import Selected
               </Button>

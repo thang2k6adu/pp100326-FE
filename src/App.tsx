@@ -14,6 +14,7 @@ const ForgotPassword = React.lazy(() => import('@/pages/ForgotPassword'));
 const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
 const Projects = React.lazy(() => import('@/pages/Projects'));
 const ProjectDetail = React.lazy(() => import('@/pages/ProjectDetail'));
+const Templates = React.lazy(() => import('@/pages/Templates'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 
 // Protected Route Component
@@ -59,6 +60,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProjectDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="templates"
+              element={
+                <ProtectedRoute>
+                  <Templates />
                 </ProtectedRoute>
               }
             />

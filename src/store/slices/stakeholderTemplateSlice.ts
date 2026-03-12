@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StakeholderTemplate } from '@/types/stakeholder';
-import { fetchStakeholderTemplatesThunk } from '../thunks/stakeholderTemplateThunks';
+import {
+  fetchStakeholderTemplatesThunk,
+  createStakeholderTemplateThunk,
+  updateStakeholderTemplateThunk,
+  deleteStakeholderTemplateThunk,
+} from '../thunks/stakeholderTemplateThunks';
 
 interface StakeholderTemplateState {
   templates: StakeholderTemplate[];
@@ -46,6 +51,35 @@ const stakeholderTemplateSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload || 'Failed to fetch templates';
       });
+
+    // Create template
+    builder.addCase(
+      createStakeholderTemplateThunk.fulfilled,
+      (state, action) => {
+        state.templates.unshift(action.payload);
+      }
+    );
+
+    // Update template
+    builder.addCase(
+      updateStakeholderTemplateThunk.fulfilled,
+      (state, action) => {
+        const index = state.templates.findIndex(
+          t => t.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.templates[index] = action.payload;
+        }
+      }
+    );
+
+    // Delete template
+    builder.addCase(
+      deleteStakeholderTemplateThunk.fulfilled,
+      (state, action) => {
+        state.templates = state.templates.filter(t => t.id !== action.payload);
+      }
+    );
   },
 });
 

@@ -50,6 +50,8 @@ const stakeholderSlice = createSlice({
         state.isLoading = false;
         state.stakeholders = action.payload.data.items;
         state.total = action.payload.data.meta.totalItems;
+        state.page = action.payload.data.meta.currentPage;
+        state.limit = action.payload.data.meta.itemsPerPage;
       })
       .addCase(fetchStakeholdersThunk.rejected, (state, action) => {
         state.isLoading = false;

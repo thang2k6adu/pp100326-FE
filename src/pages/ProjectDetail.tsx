@@ -22,6 +22,9 @@ const ProjectDetail: React.FC = () => {
     fetchStakeholders,
     deleteStakeholder,
     isLoading: isStakeholdersLoading,
+    page,
+    total,
+    limit,
   } = useStakeholders();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -211,31 +214,41 @@ const ProjectDetail: React.FC = () => {
 
   const handleExportExcel = () => {
     const exportData = displayedStakeholders.map(s => ({
-      'name': s.name || '',
-      'Position': s.positionRole || '',
+      name: s.name || '',
+      Position: s.positionRole || '',
       'Contact Information': s.contactInformation || '',
-      'requirements': s.requirements || '',
-      'Expectations': s.expectations || '',
-      'Classification': s.classification || '',
-      'power': s.power || '',
-      'Interest': s.interest || '',
-      'Influence': s.influence || '',
-      'Attitude': `${s.currentAttitude || ''} -> ${s.desiredAttitude || ''}`
+      requirements: s.requirements || '',
+      Expectations: s.expectations || '',
+      Classification: s.classification || '',
+      power: s.power || '',
+      Interest: s.interest || '',
+      Influence: s.influence || '',
+      Attitude: `${s.currentAttitude || ''} -> ${s.desiredAttitude || ''}`,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Stakeholders');
-    
+
     // Auto-size columns slightly
     const colWidths = [
-      { wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 40 }, 
-      { wch: 40 }, { wch: 15 }, { wch: 10 }, { wch: 10 }, 
-      { wch: 15 }, { wch: 25 }
+      { wch: 25 },
+      { wch: 25 },
+      { wch: 25 },
+      { wch: 40 },
+      { wch: 40 },
+      { wch: 15 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 15 },
+      { wch: 25 },
     ];
     worksheet['!cols'] = colWidths;
 
-    XLSX.writeFile(workbook, `${currentProject?.name || 'Project'}_Stakeholders.xlsx`);
+    XLSX.writeFile(
+      workbook,
+      `${currentProject?.name || 'Project'}_Stakeholders.xlsx`
+    );
   };
 
   if (isProjectLoading || !currentProject) {
@@ -267,10 +280,7 @@ const ProjectDetail: React.FC = () => {
               Stakeholder Register
             </h2>
             <div className="space-x-3">
-              <Button
-                variant="outline"
-                onClick={handleExportExcel}
-              >
+              <Button variant="outline" onClick={handleExportExcel}>
                 Export Excel
               </Button>
               <Button
@@ -596,6 +606,36 @@ const ProjectDetail: React.FC = () => {
                   <p className="text-sm mt-1">
                     Try a different category or add a new stakeholder.
                   </p>
+                </div>
+              )}
+              {total > 0 && selectedGroup === 'All Stakeholders' && (
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Showing page {page} of {Math.ceil(total / limit)} (Total:{' '}
+                    {total})
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page <= 1}
+                      onClick={() =>
+                        fetchStakeholders({ projectId: id, page: page - 1 })
+                      }
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page >= Math.ceil(total / limit)}
+                      onClick={() =>
+                        fetchStakeholders({ projectId: id, page: page + 1 })
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

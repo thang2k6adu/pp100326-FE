@@ -6,6 +6,7 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/forgot-password',
   DASHBOARD: '/dashboard',
   PROJECTS: '/projects',
+  TEMPLATES: '/templates',
   PROJECT_DETAIL: (id: string) => `/projects/${id}`,
 } as const;
 

@@ -51,6 +51,14 @@ const Layout: React.FC = () => {
                     >
                       Projects
                     </Link>
+                    {user?.role === 'admin' && (
+                      <Link
+                        to={ROUTES.TEMPLATES}
+                        className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                      >
+                        Template Library
+                      </Link>
+                    )}
                   </>
                 )}
               </div>
