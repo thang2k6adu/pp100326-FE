@@ -23,7 +23,7 @@ export const useAuth = () => {
     const result = await dispatch(loginThunk(credentials));
     if (loginThunk.fulfilled.match(result)) {
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (loginThunk.rejected.match(result)) {
       toast.error(result.payload || 'Login failed');
     }
@@ -33,7 +33,7 @@ export const useAuth = () => {
     const result = await dispatch(signUpThunk(credentials));
     if (signUpThunk.fulfilled.match(result)) {
       toast.success('Account created successfully!');
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (signUpThunk.rejected.match(result)) {
       toast.error(result.payload || 'Sign up failed');
     }
@@ -54,7 +54,7 @@ export const useAuth = () => {
     const result = await dispatch(signInWithGoogleThunk());
     if (signInWithGoogleThunk.fulfilled.match(result)) {
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (signInWithGoogleThunk.rejected.match(result)) {
       toast.error('Google sign in failed');
     }
@@ -64,7 +64,7 @@ export const useAuth = () => {
     const result = await dispatch(signInWithFacebookThunk());
     if (signInWithFacebookThunk.fulfilled.match(result)) {
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (signInWithFacebookThunk.rejected.match(result)) {
       toast.error('Facebook sign in failed');
     }
@@ -74,7 +74,7 @@ export const useAuth = () => {
     const result = await dispatch(signInWithGitHubThunk());
     if (signInWithGitHubThunk.fulfilled.match(result)) {
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/projects');
     } else if (signInWithGitHubThunk.rejected.match(result)) {
       toast.error('GitHub sign in failed');
     }

@@ -19,47 +19,19 @@ const Layout: React.FC = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <Link
-                to={ROUTES.HOME}
+                to={ROUTES.PROJECTS}
                 className="text-xl font-bold text-primary-600 dark:text-primary-400"
               >
-                React Boilerplate
+                StakeholderHub
               </Link>
               <div className="hidden md:flex space-x-4">
-                <Link
-                  to={ROUTES.HOME}
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  {t('pages.home')}
-                </Link>
-                <Link
-                  to={ROUTES.ABOUT}
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  {t('pages.about')}
-                </Link>
                 {isAuthenticated && (
-                  <>
-                    <Link
-                      to={ROUTES.DASHBOARD}
-                      className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                    >
-                      {t('pages.dashboard')}
-                    </Link>
-                    <Link
-                      to={ROUTES.PROJECTS}
-                      className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                    >
-                      Projects
-                    </Link>
-                    {user?.role === 'admin' && (
-                      <Link
-                        to={ROUTES.TEMPLATES}
-                        className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                      >
-                        Template Library
-                      </Link>
-                    )}
-                  </>
+                  <Link
+                    to={ROUTES.PROJECTS}
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Projects
+                  </Link>
                 )}
               </div>
             </div>
